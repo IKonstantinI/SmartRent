@@ -27,8 +27,8 @@ class ContractFormViewModel: ObservableObject {
     @Published var isSaving = false
     
     private var cancellables = Set<AnyCancellable>()
-    
     private let contractsViewModel: ContractsViewModel
+    let contract: RentalContract?
     
     var isValid: Bool {
         !number.isEmpty &&
@@ -39,15 +39,27 @@ class ContractFormViewModel: ObservableObject {
         selectedTenantId != nil
     }
     
-    init(contractsViewModel: ContractsViewModel) {
+    init(contract: RentalContract? = nil, contractsViewModel: ContractsViewModel) {
+        self.contract = contract
         self.contractsViewModel = contractsViewModel
         loadData()
+        if let contract = contract {
+            loadContract(contract)
+        }
     }
     
     func loadData() {
         // TODO: Загрузка списка объектов и арендаторов
         properties = PropertiesViewModel().properties
         tenants = TenantsViewModel().tenants
+    }
+    
+    private var selectedProperty: Property? {
+        properties.first { $0.id == selectedPropertyId }
+    }
+    
+    private var selectedTenant: Tenant? {
+        tenants.first { $0.id == selectedTenantId }
     }
     
     func loadContract(_ contract: RentalContract) {
@@ -69,17 +81,10 @@ class ContractFormViewModel: ObservableObject {
         additionalServices = contract.utilityPayments.additionalServices.joined(separator: ", ")
     }
     
-    func save() async {
-        guard isValid else { return }
-        
-        guard let property = properties.first(where: { $0.id == selectedPropertyId }),
-              let tenant = tenants.first(where: { $0.id == selectedTenantId }) else {
-            error = "Не удалось найти выбранный объект или арендатора"
-            return
-        }
-        
-        isSaving = true
-        defer { isSaving = false }
+    func save() {
+        guard isValid,
+              let property = selectedProperty,
+              let tenant = selectedTenant else { return }
         
         let additionalServicesList = additionalServices
             .split(separator: ",")
@@ -96,7 +101,7 @@ class ContractFormViewModel: ObservableObject {
         )
         
         let newContract = RentalContract(
-            id: UUID(),
+            id: contract?.id ?? UUID(),
             number: number,
             startDate: startDate,
             endDate: endDate,
@@ -104,15 +109,15 @@ class ContractFormViewModel: ObservableObject {
             tenant: tenant,
             rentalRate: rentalRate,
             securityDeposit: securityDeposit,
-            status: .draft,
+            status: contract?.status ?? .draft,
             paymentDay: paymentDay,
             utilityPayments: utilityPayments
         )
         
-        do {
-            try await contractsViewModel.saveContract(newContract)
-        } catch {
-            self.error = error.localizedDescription
+        if contract == nil {
+            contractsViewModel.contracts.append(newContract)
+        } else {
+            contractsViewModel.updateContract(newContract)
         }
     }
 } 

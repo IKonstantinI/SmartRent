@@ -1,49 +1,9 @@
 import Foundation
 import Combine
 
+@MainActor
 class TenantsViewModel: ObservableObject {
-    @Published var tenants: [Tenant] = [
-        Tenant(
-            id: UUID(),
-            firstName: "Иван",
-            lastName: "Иванов",
-            phone: "+7 (999) 123-45-67",
-            email: "ivanov@example.com",
-            passport: "1234 567890"
-        ),
-        Tenant(
-            id: UUID(),
-            firstName: "Петр",
-            lastName: "Петров",
-            phone: "+7 (999) 234-56-78",
-            email: "petrov@example.com",
-            passport: "4321 098765"
-        ),
-        Tenant(
-            id: UUID(),
-            firstName: "Алексей",
-            lastName: "Сидоров",
-            phone: "+7 (999) 345-67-89",
-            email: "sidorov@example.com",
-            passport: "5678 123456"
-        ),
-        Tenant(
-            id: UUID(),
-            firstName: "Мария",
-            lastName: "Петрова",
-            phone: "+7 (999) 456-78-90",
-            email: "petrova@example.com",
-            passport: "9876 543210"
-        ),
-        Tenant(
-            id: UUID(),
-            firstName: "Николай",
-            lastName: "Николаев",
-            phone: "+7 (999) 567-89-01",
-            email: "nikolaev@example.com",
-            passport: "2468 135790"
-        )
-    ]
+    @Published var tenants: [Tenant] = []
     @Published var isLoading = false
     @Published var error: String?
     
@@ -52,6 +12,70 @@ class TenantsViewModel: ObservableObject {
     }
     
     private func loadMockData() {
-        // Данные уже загружены в инициализаторе массива tenants
+        tenants = [
+            Tenant(
+                id: UUID(),
+                firstName: "Иван",
+                lastName: "Иванов",
+                middleName: "Иванович",
+                phone: "+7 (999) 123-45-67",
+                email: "ivan@example.com",
+                passport: "4444 555666",
+                inn: "123456789012"
+            ),
+            Tenant(
+                id: UUID(),
+                firstName: "Петр",
+                lastName: "Петров",
+                middleName: "Петрович",
+                phone: "+7 (999) 765-43-21",
+                email: "petr@example.com",
+                passport: "7777 888999",
+                inn: "987654321098"
+            )
+        ]
+    }
+    
+    func addTenant(_ tenant: Tenant) {
+        tenants.append(tenant)
+    }
+    
+    func updateTenant(_ tenant: Tenant) {
+        if let index = tenants.firstIndex(where: { $0.id == tenant.id }) {
+            tenants[index] = tenant
+        }
+    }
+    
+    func deleteTenant(_ tenant: Tenant) {
+        tenants.removeAll { $0.id == tenant.id }
+    }
+}
+
+extension TenantsViewModel {
+    static var preview: TenantsViewModel {
+        let viewModel = TenantsViewModel()
+        viewModel.tenants = [
+            Tenant(
+                id: UUID(),
+                firstName: "Иван",
+                lastName: "Иванов",
+                middleName: "Иванович",
+                phone: "+7 (999) 123-45-67",
+                email: "ivan@example.com",
+                passport: "4444 555666",
+                inn: "123456789012"
+            ),
+            Tenant(
+                id: UUID(),
+                firstName: "Петр",
+                lastName: "Петров",
+                middleName: "Петрович",
+                phone: "+7 (999) 765-43-21",
+                email: "petr@example.com",
+                passport: "7777 888999",
+                inn: "987654321098"
+            )
+        ]
+        return viewModel
     }
 } 

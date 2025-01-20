@@ -47,19 +47,25 @@ struct PaymentFormView: View {
             .navigationTitle("Новый платеж")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Отмена") {
-                        dismiss()
-                    }
+                toolbarItems
+            }
+        }
+    }
+    
+    private var toolbarItems: some ToolbarContent {
+        Group {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Отмена") {
+                    dismiss()
                 }
-                
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Сохранить") {
-                        viewModel.save()
-                        dismiss()
-                    }
-                    .disabled(!viewModel.isValid)
+            }
+            
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Сохранить") {
+                    viewModel.save()
+                    dismiss()
                 }
+                .disabled(!viewModel.isValid)
             }
         }
     }

@@ -1,5 +1,6 @@
 import Foundation
 
+@MainActor
 class PaymentFormViewModel: ObservableObject {
     @Published var selectedContractId: UUID?
     @Published var amount: Decimal = 0
@@ -28,11 +29,11 @@ class PaymentFormViewModel: ObservableObject {
     }
     
     func save() {
-        guard let contractId = selectedContractId else { return }
+        guard isValid else { return }
         
         let newPayment = Payment(
             id: payment?.id ?? UUID(),
-            contractId: contractId,
+            contractId: selectedContractId!,
             amount: amount,
             date: date,
             type: type,

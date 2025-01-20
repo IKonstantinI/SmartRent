@@ -1,43 +1,35 @@
 import SwiftUI
 
 struct PaymentsView: View {
-    @StateObject private var viewModel = PaymentsViewModel()
-    @State private var searchText = ""
-    @State private var showNewPayment = false
-    
-    var filteredPayments: [Payment] {
-        if searchText.isEmpty {
-            return viewModel.payments
-        }
-        return viewModel.payments.filter { payment in
-            payment.description?.localizedCaseInsensitiveContains(searchText) ?? false ||
-            payment.formattedAmount.localizedCaseInsensitiveContains(searchText) ||
-            payment.type.title.localizedCaseInsensitiveContains(searchText)
-        }
-    }
+    @StateObject private var paymentsViewModel = PaymentsViewModel()
+    @State private var showAddPaymentSheet = false
     
     var body: some View {
         NavigationStack {
             List {
-                ForEach(filteredPayments) { payment in
+                ForEach(paymentsViewModel.payments) { payment in
                     NavigationLink {
-                        PaymentDetailView(payment: payment, paymentsViewModel: viewModel)
+                        PaymentDetailView(
+                            payment: payment,
+                            paymentsViewModel: paymentsViewModel
+                        )
                     } label: {
                         PaymentRowView(payment: payment)
                     }
                 }
             }
             .navigationTitle("Платежи")
-            .searchable(text: $searchText, prompt: "Поиск по описанию или сумме")
             .toolbar {
-                Button {
-                    showNewPayment = true
-                } label: {
-                    Label("Новый платеж", systemImage: "plus")
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        showAddPaymentSheet = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
                 }
             }
-            .sheet(isPresented: $showNewPayment) {
-                PaymentFormView(paymentsViewModel: viewModel)
+            .sheet(isPresented: $showAddPaymentSheet) {
+                PaymentFormView(paymentsViewModel: paymentsViewModel)
             }
         }
     }

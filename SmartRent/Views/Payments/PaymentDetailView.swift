@@ -2,99 +2,61 @@ import SwiftUI
 
 struct PaymentDetailView: View {
     let payment: Payment
-    @EnvironmentObject var contractsViewModel: ContractsViewModel
     @ObservedObject var paymentsViewModel: PaymentsViewModel
     @Environment(\.dismiss) private var dismiss
-    @State private var showEditForm = false
-    @State private var showDeleteAlert = false
+    @State private var showEditSheet = false
     
-    private var contract: RentalContract? {
-        contractsViewModel.contracts.first { $0.id == payment.contractId }
+    private var typeDescription: String {
+        payment.type.title
+    }
+    
+    private var statusDescription: String {
+        payment.status.title
     }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                // Основная информация
-                Group {
-                    Text(payment.type.title)
-                        .font(.title)
-                        .bold()
-                    
-                    if let description = payment.description {
-                        Text(description)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                
-                Divider()
-                
-                // Детали платежа
-                Group {
-                    Text("Детали платежа")
-                        .font(.headline)
-                    
-                    InfoRow(title: "Сумма", value: payment.formattedAmount)
-                    InfoRow(title: "Дата", value: payment.formattedDate)
-                    InfoRow(title: "Статус", value: payment.status.title)
-                }
-                
-                Divider()
-                
-                // Информация о договоре
-                if let contract = contract {
-                    Group {
-                        Text("Договор")
-                            .font(.headline)
-                        
-                        NavigationLink(destination: ContractDetailView(contract: contract)) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("№ \(contract.number)")
-                                    .font(.subheadline)
-                                    .bold()
-                                
-                                Text("\(contract.tenant.fullName) - \(contract.property.name)")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
+        List {
+            Section {
+                InfoRow(title: "Сумма", value: payment.formattedAmount)
+                InfoRow(title: "Дата", value: payment.date.formatted(date: .long, time: .omitted))
+                InfoRow(title: "Тип", value: typeDescription)
+                InfoRow(title: "Статус", value: statusDescription)
+            } header: {
+                Text("Основная информация")
+            }
+            
+            if let description = payment.description, !description.isEmpty {
+                Section {
+                    Text(description)
+                } header: {
+                    Text("Комментарий")
                 }
             }
-            .padding()
         }
-        .navigationBarTitleDisplayMode(.inline)
+        .listStyle(.insetGrouped)
+        .navigationTitle("Платеж")
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    Button(role: .destructive) {
-                        showDeleteAlert = true
-                    } label: {
-                        Label("Удалить", systemImage: "trash")
-                    }
-                    
                     Button {
-                        showEditForm = true
+                        showEditSheet = true
                     } label: {
                         Label("Редактировать", systemImage: "pencil")
+                    }
+                    
+                    Button(role: .destructive) {
+                        paymentsViewModel.deletePayment(payment)
+                        dismiss()
+                    } label: {
+                        Label("Удалить", systemImage: "trash")
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
             }
         }
-        .sheet(isPresented: $showEditForm) {
+        .sheet(isPresented: $showEditSheet) {
             PaymentFormView(paymentsViewModel: paymentsViewModel, payment: payment)
-        }
-        .alert("Удалить платеж?", isPresented: $showDeleteAlert) {
-            Button("Отмена", role: .cancel) { }
-            Button("Удалить", role: .destructive) {
-                paymentsViewModel.deletePayment(payment)
-                dismiss()
-            }
-        } message: {
-            Text("Это действие нельзя отменить")
         }
     }
 }
@@ -102,17 +64,8 @@ struct PaymentDetailView: View {
 #Preview {
     NavigationStack {
         PaymentDetailView(
-            payment: Payment(
-                id: UUID(),
-                contractId: UUID(),
-                amount: 50000,
-                date: Date(),
-                type: .rent,
-                status: .paid,
-                description: "Арендная плата за январь 2024"
-            ),
-            paymentsViewModel: PaymentsViewModel()
+            payment: PaymentsViewModel.preview.payments[0],
+            paymentsViewModel: PaymentsViewModel.preview
         )
-        .environmentObject(ContractsViewModel())
     }
 } 

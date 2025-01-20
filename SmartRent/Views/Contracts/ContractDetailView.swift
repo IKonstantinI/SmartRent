@@ -1,12 +1,16 @@
 import SwiftUI
 
 struct ContractDetailView: View {
-    @EnvironmentObject var contractsViewModel: ContractsViewModel
     let contract: RentalContract
+    @ObservedObject var contractsViewModel: ContractsViewModel
+    @StateObject private var tenantsViewModel = TenantsViewModel()
     @State private var showTerminateAlert = false
     @State private var showActivateAlert = false
     @State private var isProcessing = false
     @State private var error: String?
+    @Environment(\.dismiss) private var dismiss
+    @State private var showEditForm = false
+    @State private var showDeleteAlert = false
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -56,6 +60,41 @@ struct ContractDetailView: View {
                 ProgressView()
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button(role: .destructive) {
+                        showDeleteAlert = true
+                    } label: {
+                        Label("Удалить", systemImage: "trash")
+                    }
+                    
+                    Button {
+                        showEditForm = true
+                    } label: {
+                        Label("Редактировать", systemImage: "pencil")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
+        .sheet(isPresented: $showEditForm) {
+            ContractFormView(
+                contractsViewModel: contractsViewModel,
+                contract: contract
+            )
+        }
+        .alert("Удалить договор?", isPresented: $showDeleteAlert) {
+            Button("Отмена", role: .cancel) { }
+            Button("Удалить", role: .destructive) {
+                contractsViewModel.deleteContract(contract)
+                dismiss()
+            }
+        } message: {
+            Text("Это действие нельзя отменить. Все связанные платежи также будут удалены.")
+        }
     }
     
     // MARK: - View Components
@@ -91,9 +130,16 @@ struct ContractDetailView: View {
     private var tenantSection: some View {
         Section("Арендатор") {
             NavigationLink {
-                TenantDetailView(tenant: contract.tenant)
+                TenantDetailView(
+                    tenant: contract.tenant,
+                    tenantsViewModel: tenantsViewModel
+                )
             } label: {
-                TenantRowView(tenant: contract.tenant)
+                VStack(alignment: .leading) {
+                    Text(contract.tenant.fullName)
+                    Text(contract.tenant.phone)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
     }
@@ -160,6 +206,9 @@ struct ContractDetailView: View {
 
 #Preview {
     NavigationStack {
-        ContractDetailView(contract: ContractsViewModel().contracts[0])
+        ContractDetailView(
+            contract: ContractsViewModel().contracts[0],
+            contractsViewModel: ContractsViewModel()
+        )
     }
 } 

@@ -73,4 +73,17 @@ enum PaymentStatus: String, Hashable {
             return .gray
         }
     }
+    
+    var localizedName: String {
+        switch self {
+        case .pending:
+            return "Ожидает оплаты"
+        case .paid:
+            return "Оплачен"
+        case .overdue:
+            return "Просрочен"
+        case .cancelled:
+            return "Отменен"
+        }
+    }
 } 

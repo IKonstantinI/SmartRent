@@ -4,12 +4,17 @@ struct Tenant: Identifiable, Hashable {
     let id: UUID
     let firstName: String
     let lastName: String
+    let middleName: String
     let phone: String
     let email: String
     let passport: String
+    let inn: String
     
     var fullName: String {
-        "\(firstName) \(lastName)"
+        if middleName.isEmpty {
+            return "\(firstName) \(lastName)"
+        }
+        return "\(firstName) \(middleName) \(lastName)"
     }
     
     // Добавляем реализацию Hashable

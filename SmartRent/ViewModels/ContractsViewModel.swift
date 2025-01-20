@@ -75,11 +75,14 @@ class ContractsViewModel: ObservableObject {
         contracts.append(contract)
     }
     
-    func updateContract(_ contract: RentalContract) async throws {
-        guard let index = contracts.firstIndex(where: { $0.id == contract.id }) else {
-            throw ContractError.notFound
+    func updateContract(_ contract: RentalContract) {
+        if let index = contracts.firstIndex(where: { $0.id == contract.id }) {
+            contracts[index] = contract
         }
-        contracts[index] = contract
+    }
+    
+    func deleteContract(_ contract: RentalContract) {
+        contracts.removeAll { $0.id == contract.id }
     }
     
     @MainActor
@@ -117,5 +120,57 @@ enum ContractError: LocalizedError {
         case .notFound:
             return "Договор не найден"
         }
+    }
+}
+
+extension ContractsViewModel {
+    static var preview: ContractsViewModel {
+        let viewModel = ContractsViewModel()
+        let propertiesVM = PropertiesViewModel()
+        let tenantsVM = TenantsViewModel()
+        
+        viewModel.contracts = [
+            RentalContract(
+                id: UUID(),
+                number: "2024-001",
+                startDate: Date(),
+                endDate: Date().addingTimeInterval(86400 * 365),
+                property: propertiesVM.properties[0],
+                tenant: tenantsVM.tenants[0],
+                rentalRate: 50000,
+                securityDeposit: 50000,
+                status: .active,
+                paymentDay: 5,
+                utilityPayments: UtilityPayments(
+                    includeElectricity: true,
+                    includeWater: true,
+                    includeHeating: true,
+                    includeInternet: false,
+                    includeCleaning: false,
+                    additionalServices: []
+                )
+            ),
+            RentalContract(
+                id: UUID(),
+                number: "2023-015",
+                startDate: Date().addingTimeInterval(-86400 * 365),
+                endDate: Date(),
+                property: propertiesVM.properties[1],
+                tenant: tenantsVM.tenants[1],
+                rentalRate: 45000,
+                securityDeposit: 45000,
+                status: .terminated,
+                paymentDay: 10,
+                utilityPayments: UtilityPayments(
+                    includeElectricity: false,
+                    includeWater: true,
+                    includeHeating: true,
+                    includeInternet: false,
+                    includeCleaning: false,
+                    additionalServices: []
+                )
+            )
+        ]
+        return viewModel
     }
 } 

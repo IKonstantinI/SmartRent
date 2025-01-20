@@ -1,16 +1,14 @@
 import SwiftUI
 
 struct ContractFormView: View {
-    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: ContractFormViewModel
+    @Environment(\.dismiss) private var dismiss
     
-    let contract: RentalContract?
-    let contractsViewModel: ContractsViewModel
-    
-    init(contract: RentalContract? = nil, contractsViewModel: ContractsViewModel) {
-        self.contract = contract
-        self.contractsViewModel = contractsViewModel
-        _viewModel = StateObject(wrappedValue: ContractFormViewModel(contractsViewModel: contractsViewModel))
+    init(contractsViewModel: ContractsViewModel, contract: RentalContract? = nil) {
+        _viewModel = StateObject(wrappedValue: ContractFormViewModel(
+            contract: contract,
+            contractsViewModel: contractsViewModel
+        ))
     }
     
     var body: some View {
@@ -21,13 +19,13 @@ struct ContractFormView: View {
                 tenantSection
                 utilitiesSection
             }
-            .navigationTitle(contract == nil ? "Новый договор" : "Редактирование")
+            .navigationTitle(viewModel.contract == nil ? "Новый договор" : "Редактирование")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 toolbarItems
             }
             .onAppear {
-                if let contract = contract {
+                if let contract = viewModel.contract {
                     viewModel.loadContract(contract)
                 }
             }

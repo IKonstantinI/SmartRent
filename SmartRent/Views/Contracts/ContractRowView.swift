@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContractRowView: View {
     let contract: RentalContract
+    @StateObject private var tenantsViewModel = TenantsViewModel()
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -21,7 +22,10 @@ struct ContractRowView: View {
                 StatusBadgeView(status: contract.status)
             }
             
-            NavigationLink(destination: TenantDetailView(tenant: contract.tenant)) {
+            NavigationLink(destination: TenantDetailView(
+                tenant: contract.tenant,
+                tenantsViewModel: tenantsViewModel
+            )) {
                 Text(contract.tenant.fullName)
                     .font(.subheadline)
             }

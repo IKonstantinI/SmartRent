@@ -59,4 +59,31 @@ class PaymentsViewModel: ObservableObject {
     func deletePayment(_ payment: Payment) {
         payments.removeAll { $0.id == payment.id }
     }
+}
+
+extension PaymentsViewModel {
+    static var preview: PaymentsViewModel {
+        let viewModel = PaymentsViewModel()
+        viewModel.payments = [
+            Payment(
+                id: UUID(),
+                contractId: UUID(),
+                amount: 50000,
+                date: Date(),
+                type: .rent,
+                status: .pending,
+                description: "Арендная плата за январь 2024"
+            ),
+            Payment(
+                id: UUID(),
+                contractId: UUID(),
+                amount: 5000,
+                date: Date().addingTimeInterval(-86400 * 30),
+                type: .utilities,
+                status: .paid,
+                description: "Коммунальные платежи за декабрь 2023"
+            )
+        ]
+        return viewModel
+    }
 } 
