@@ -3,6 +3,10 @@ import SwiftUI
 struct PaymentDetailView: View {
     let payment: Payment
     @EnvironmentObject var contractsViewModel: ContractsViewModel
+    @ObservedObject var paymentsViewModel: PaymentsViewModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var showEditForm = false
+    @State private var showDeleteAlert = false
     
     private var contract: RentalContract? {
         contractsViewModel.contracts.first { $0.id == payment.contractId }
@@ -61,6 +65,37 @@ struct PaymentDetailView: View {
             .padding()
         }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button(role: .destructive) {
+                        showDeleteAlert = true
+                    } label: {
+                        Label("Удалить", systemImage: "trash")
+                    }
+                    
+                    Button {
+                        showEditForm = true
+                    } label: {
+                        Label("Редактировать", systemImage: "pencil")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
+        .sheet(isPresented: $showEditForm) {
+            PaymentFormView(paymentsViewModel: paymentsViewModel, payment: payment)
+        }
+        .alert("Удалить платеж?", isPresented: $showDeleteAlert) {
+            Button("Отмена", role: .cancel) { }
+            Button("Удалить", role: .destructive) {
+                paymentsViewModel.deletePayment(payment)
+                dismiss()
+            }
+        } message: {
+            Text("Это действие нельзя отменить")
+        }
     }
 }
 
@@ -75,7 +110,8 @@ struct PaymentDetailView: View {
                 type: .rent,
                 status: .paid,
                 description: "Арендная плата за январь 2024"
-            )
+            ),
+            paymentsViewModel: PaymentsViewModel()
         )
         .environmentObject(ContractsViewModel())
     }

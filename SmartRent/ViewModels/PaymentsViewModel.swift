@@ -49,4 +49,14 @@ class PaymentsViewModel: ObservableObject {
             )
         ]
     }
+    
+    func updatePayment(_ payment: Payment) {
+        if let index = payments.firstIndex(where: { $0.id == payment.id }) {
+            payments[index] = payment
+        }
+    }
+    
+    func deletePayment(_ payment: Payment) {
+        payments.removeAll { $0.id == payment.id }
+    }
 } 

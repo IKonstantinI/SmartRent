@@ -36,18 +36,14 @@ class PaymentFormViewModel: ObservableObject {
             amount: amount,
             date: date,
             type: type,
-            status: .pending,
+            status: payment?.status ?? .pending,
             description: description.isEmpty ? nil : description
         )
         
-        // TODO: Добавить сохранение в базу данных
-        // Пока просто добавляем в массив
         if payment == nil {
             paymentsViewModel.payments.append(newPayment)
         } else {
-            if let index = paymentsViewModel.payments.firstIndex(where: { $0.id == payment?.id }) {
-                paymentsViewModel.payments[index] = newPayment
-            }
+            paymentsViewModel.updatePayment(newPayment)
         }
     }
 } 

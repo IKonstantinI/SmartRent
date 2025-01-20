@@ -20,7 +20,9 @@ struct PaymentsView: View {
         NavigationStack {
             List {
                 ForEach(filteredPayments) { payment in
-                    NavigationLink(value: payment) {
+                    NavigationLink {
+                        PaymentDetailView(payment: payment, paymentsViewModel: viewModel)
+                    } label: {
                         PaymentRowView(payment: payment)
                     }
                 }
@@ -33,9 +35,6 @@ struct PaymentsView: View {
                 } label: {
                     Label("Новый платеж", systemImage: "plus")
                 }
-            }
-            .navigationDestination(for: Payment.self) { payment in
-                PaymentDetailView(payment: payment)
             }
             .sheet(isPresented: $showNewPayment) {
                 PaymentFormView(paymentsViewModel: viewModel)
