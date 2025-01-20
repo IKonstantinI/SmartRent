@@ -8,15 +8,9 @@ struct TenantDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 // Основная информация
                 Group {
-                    Text(tenant.name)
+                    Text(tenant.fullName)
                         .font(.title)
                         .bold()
-                    
-                    if let contactPerson = tenant.contacts.contactPerson {
-                        Text("Контактное лицо: \(contactPerson)")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
                 }
                 
                 Divider()
@@ -26,43 +20,18 @@ struct TenantDetailView: View {
                     Text("Контакты")
                         .font(.headline)
                     
-                    InfoRow(title: "Телефон", value: tenant.contacts.phone)
-                    InfoRow(title: "Email", value: tenant.contacts.email)
+                    InfoRow(title: "Телефон", value: tenant.phone)
+                    InfoRow(title: "Email", value: tenant.email)
                 }
                 
                 Divider()
                 
-                // Банковские реквизиты
+                // Паспортные данные
                 Group {
-                    Text("Банковские реквизиты")
+                    Text("Паспортные данные")
                         .font(.headline)
                     
-                    InfoRow(title: "Банк", value: tenant.bankDetails.bankName)
-                    InfoRow(title: "Расчетный счет", value: tenant.bankDetails.accountNumber)
-                    InfoRow(title: "БИК", value: tenant.bankDetails.bik)
-                    InfoRow(title: "Корр. счет", value: tenant.bankDetails.correspondentAccount)
-                }
-                
-                Divider()
-                
-                // Налоговая информация
-                Group {
-                    Text("Налоговая информация")
-                        .font(.headline)
-                    
-                    InfoRow(title: "ИНН", value: tenant.taxInfo.inn)
-                    
-                    if let kpp = tenant.taxInfo.kpp {
-                        InfoRow(title: "КПП", value: kpp)
-                    }
-                    
-                    if let ogrn = tenant.taxInfo.ogrn {
-                        InfoRow(title: "ОГРН", value: ogrn)
-                    }
-                    
-                    if let ogrnip = tenant.taxInfo.ogrnip {
-                        InfoRow(title: "ОГРНИП", value: ogrnip)
-                    }
+                    InfoRow(title: "Серия и номер", value: tenant.passport)
                 }
             }
             .padding()

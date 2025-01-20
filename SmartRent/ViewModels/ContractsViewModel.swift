@@ -82,16 +82,30 @@ class ContractsViewModel: ObservableObject {
         contracts[index] = contract
     }
     
-    func terminateContract(_ contract: RentalContract) async throws {
-        var updatedContract = contract
-        updatedContract.status = .terminated
-        try await updateContract(updatedContract)
+    @MainActor
+    func activateContract(_ contract: RentalContract) async throws {
+        guard let index = contracts.firstIndex(where: { $0.id == contract.id }) else {
+            throw ContractError.notFound
+        }
+        
+        // Имитация задержки сети
+        try? await Task.sleep(for: .seconds(1))
+        
+        // Обновляем статус договора
+        contracts[index].status = .active
     }
     
-    func activateContract(_ contract: RentalContract) async throws {
-        var updatedContract = contract
-        updatedContract.status = .active
-        try await updateContract(updatedContract)
+    @MainActor
+    func terminateContract(_ contract: RentalContract) async throws {
+        guard let index = contracts.firstIndex(where: { $0.id == contract.id }) else {
+            throw ContractError.notFound
+        }
+        
+        // Имитация задержки сети
+        try? await Task.sleep(for: .seconds(1))
+        
+        // Обновляем статус договора
+        contracts[index].status = .terminated
     }
 }
 

@@ -2,7 +2,48 @@ import Foundation
 import Combine
 
 class TenantsViewModel: ObservableObject {
-    @Published var tenants: [Tenant] = []
+    @Published var tenants: [Tenant] = [
+        Tenant(
+            id: UUID(),
+            firstName: "Иван",
+            lastName: "Иванов",
+            phone: "+7 (999) 123-45-67",
+            email: "ivanov@example.com",
+            passport: "1234 567890"
+        ),
+        Tenant(
+            id: UUID(),
+            firstName: "Петр",
+            lastName: "Петров",
+            phone: "+7 (999) 234-56-78",
+            email: "petrov@example.com",
+            passport: "4321 098765"
+        ),
+        Tenant(
+            id: UUID(),
+            firstName: "Алексей",
+            lastName: "Сидоров",
+            phone: "+7 (999) 345-67-89",
+            email: "sidorov@example.com",
+            passport: "5678 123456"
+        ),
+        Tenant(
+            id: UUID(),
+            firstName: "Мария",
+            lastName: "Петрова",
+            phone: "+7 (999) 456-78-90",
+            email: "petrova@example.com",
+            passport: "9876 543210"
+        ),
+        Tenant(
+            id: UUID(),
+            firstName: "Николай",
+            lastName: "Николаев",
+            phone: "+7 (999) 567-89-01",
+            email: "nikolaev@example.com",
+            passport: "2468 135790"
+        )
+    ]
     @Published var isLoading = false
     @Published var error: String?
     
@@ -11,112 +52,6 @@ class TenantsViewModel: ObservableObject {
     }
     
     private func loadMockData() {
-        tenants = [
-            Tenant(
-                id: UUID(),
-                name: "Иванов Иван Иванович",
-                contacts: ContactInfo(
-                    phone: "+7 (999) 123-45-67",
-                    email: "ivanov@mail.ru",
-                    contactPerson: nil
-                ),
-                bankDetails: BankDetails(
-                    bankName: "Сбербанк",
-                    accountNumber: "40817810123456789012",
-                    bik: "044525225",
-                    correspondentAccount: "30101810400000000225"
-                ),
-                taxInfo: TaxInfo(
-                    inn: "771234567890",
-                    kpp: nil,
-                    ogrn: nil,
-                    ogrnip: "321774600001234"
-                )
-            ),
-            Tenant(
-                id: UUID(),
-                name: "ООО 'ТехноСтрой'",
-                contacts: ContactInfo(
-                    phone: "+7 (999) 234-56-78",
-                    email: "info@technostroy.ru",
-                    contactPerson: "Петров Петр Петрович"
-                ),
-                bankDetails: BankDetails(
-                    bankName: "ВТБ",
-                    accountNumber: "40702810987654321098",
-                    bik: "044525745",
-                    correspondentAccount: "30101810345250000745"
-                ),
-                taxInfo: TaxInfo(
-                    inn: "7701234567",
-                    kpp: "770101001",
-                    ogrn: "1027700123456",
-                    ogrnip: nil
-                )
-            ),
-            Tenant(
-                id: UUID(),
-                name: "Сидоров Алексей Петрович",
-                contacts: ContactInfo(
-                    phone: "+7 (999) 456-78-90",
-                    email: "sidorov@yandex.ru",
-                    contactPerson: "Сидоров А.П."
-                ),
-                bankDetails: BankDetails(
-                    bankName: "Альфа-Банк",
-                    accountNumber: "40802810890123456789",
-                    bik: "044525593",
-                    correspondentAccount: "30101810200000000593"
-                ),
-                taxInfo: TaxInfo(
-                    inn: "773123456789",
-                    kpp: nil,
-                    ogrn: nil,
-                    ogrnip: "321774600009876"
-                )
-            ),
-            Tenant(
-                id: UUID(),
-                name: "ИП Петрова М.С.",
-                contacts: ContactInfo(
-                    phone: "+7 (999) 567-89-01",
-                    email: "petrova@gmail.com",
-                    contactPerson: "Петрова Мария Сергеевна"
-                ),
-                bankDetails: BankDetails(
-                    bankName: "Тинькофф",
-                    accountNumber: "40802810900000123456",
-                    bik: "044525974",
-                    correspondentAccount: "30101810145250000974"
-                ),
-                taxInfo: TaxInfo(
-                    inn: "772234567890",
-                    kpp: nil,
-                    ogrn: nil,
-                    ogrnip: "321774600007654"
-                )
-            ),
-            Tenant(
-                id: UUID(),
-                name: "ЗАО 'Инвест-Строй'",
-                contacts: ContactInfo(
-                    phone: "+7 (999) 678-90-12",
-                    email: "info@invest-stroy.ru",
-                    contactPerson: "Николаев Николай Николаевич"
-                ),
-                bankDetails: BankDetails(
-                    bankName: "Райффайзен",
-                    accountNumber: "40702810234567890123",
-                    bik: "044525700",
-                    correspondentAccount: "30101810200000000700"
-                ),
-                taxInfo: TaxInfo(
-                    inn: "7702345678",
-                    kpp: "770201001",
-                    ogrn: "1027700009876",
-                    ogrnip: nil
-                )
-            )
-        ]
+        // Данные уже загружены в инициализаторе массива tenants
     }
 } 
