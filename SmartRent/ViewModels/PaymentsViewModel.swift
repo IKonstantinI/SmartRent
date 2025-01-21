@@ -1,5 +1,6 @@
 import Foundation
 
+@MainActor
 class PaymentsViewModel: ObservableObject {
     @Published var payments: [Payment] = []
     @Published var isLoading = false
@@ -10,10 +11,14 @@ class PaymentsViewModel: ObservableObject {
     }
     
     private func loadMockData() {
+        // Получаем тестовые договоры
+        let contractsVM = ContractsViewModel()
+        let contracts = contractsVM.contracts
+        
         payments = [
             Payment(
                 id: UUID(),
-                contractId: UUID(),
+                contractId: contracts[0].id,
                 amount: 50000,
                 date: Date(),
                 type: .rent,
@@ -22,7 +27,7 @@ class PaymentsViewModel: ObservableObject {
             ),
             Payment(
                 id: UUID(),
-                contractId: UUID(),
+                contractId: contracts[0].id,
                 amount: 15000,
                 date: Date().addingTimeInterval(-86400 * 5),
                 type: .utilities,
@@ -31,7 +36,7 @@ class PaymentsViewModel: ObservableObject {
             ),
             Payment(
                 id: UUID(),
-                contractId: UUID(),
+                contractId: contracts[1].id,
                 amount: 100000,
                 date: Date().addingTimeInterval(-86400 * 30),
                 type: .deposit,
@@ -40,7 +45,7 @@ class PaymentsViewModel: ObservableObject {
             ),
             Payment(
                 id: UUID(),
-                contractId: UUID(),
+                contractId: contracts[1].id,
                 amount: 25000,
                 date: Date().addingTimeInterval(-86400 * 15),
                 type: .maintenance,
@@ -64,10 +69,12 @@ class PaymentsViewModel: ObservableObject {
 extension PaymentsViewModel {
     static var preview: PaymentsViewModel {
         let viewModel = PaymentsViewModel()
+        let contracts = ContractsViewModel().contracts
+        
         viewModel.payments = [
             Payment(
                 id: UUID(),
-                contractId: UUID(),
+                contractId: contracts[0].id,
                 amount: 50000,
                 date: Date(),
                 type: .rent,
@@ -76,7 +83,7 @@ extension PaymentsViewModel {
             ),
             Payment(
                 id: UUID(),
-                contractId: UUID(),
+                contractId: contracts[1].id,
                 amount: 5000,
                 date: Date().addingTimeInterval(-86400 * 30),
                 type: .utilities,

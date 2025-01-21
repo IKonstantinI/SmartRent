@@ -10,6 +10,11 @@ struct Tenant: Identifiable, Hashable {
     let passport: String
     let inn: String
     
+    let bankDetails: BankDetails
+    let taxInfo: TaxInfo
+    let contactPerson: String?
+    let type: TenantType // физ.лицо/юр.лицо/ИП
+    
     var fullName: String {
         if middleName.isEmpty {
             return "\(firstName) \(lastName)"
@@ -25,6 +30,12 @@ struct Tenant: Identifiable, Hashable {
     static func == (lhs: Tenant, rhs: Tenant) -> Bool {
         lhs.id == rhs.id
     }
+}
+
+enum TenantType {
+    case individual    // Физ. лицо
+    case company      // Юр. лицо
+    case entrepreneur // ИП
 }
 
 struct ContactInfo: Hashable {

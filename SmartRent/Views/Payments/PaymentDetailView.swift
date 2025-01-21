@@ -3,8 +3,13 @@ import SwiftUI
 struct PaymentDetailView: View {
     let payment: Payment
     @ObservedObject var paymentsViewModel: PaymentsViewModel
+    @EnvironmentObject var contractsViewModel: ContractsViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var showEditSheet = false
+    
+    private var contract: RentalContract? {
+        contractsViewModel.contracts.first { $0.id == payment.contractId }
+    }
     
     private var typeDescription: String {
         payment.type.title
@@ -23,6 +28,41 @@ struct PaymentDetailView: View {
                 InfoRow(title: "Статус", value: statusDescription)
             } header: {
                 Text("Основная информация")
+            }
+            
+            if let contract = contract {
+                Section("Договор") {
+                    NavigationLink {
+                        ContractDetailView(
+                            contract: contract,
+                            contractsViewModel: contractsViewModel
+                        )
+                    } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("№ \(contract.number)")
+                                .font(.headline)
+                            
+                            HStack {
+                                Text(contract.tenant.fullName)
+                                    .font(.subheadline)
+                                
+                                Spacer()
+                                
+                                Text(tenantTypeTitle(for: contract.tenant))
+                                    .font(.caption)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(tenantTypeColor(for: contract.tenant).opacity(0.2))
+                                    .foregroundStyle(tenantTypeColor(for: contract.tenant))
+                                    .clipShape(Capsule())
+                            }
+                            
+                            Text(contract.property.name)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
             }
             
             if let description = payment.description, !description.isEmpty {
@@ -57,6 +97,28 @@ struct PaymentDetailView: View {
         }
         .sheet(isPresented: $showEditSheet) {
             PaymentFormView(paymentsViewModel: paymentsViewModel, payment: payment)
+        }
+    }
+    
+    private func tenantTypeTitle(for tenant: Tenant) -> String {
+        switch tenant.type {
+        case .individual:
+            return "Физ. лицо"
+        case .company:
+            return "Юр. лицо"
+        case .entrepreneur:
+            return "ИП"
+        }
+    }
+    
+    private func tenantTypeColor(for tenant: Tenant) -> Color {
+        switch tenant.type {
+        case .individual:
+            return .blue
+        case .company:
+            return .purple
+        case .entrepreneur:
+            return .green
         }
     }
 }

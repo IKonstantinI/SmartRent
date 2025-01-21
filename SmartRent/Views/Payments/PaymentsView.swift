@@ -2,19 +2,46 @@ import SwiftUI
 
 struct PaymentsView: View {
     @StateObject private var paymentsViewModel = PaymentsViewModel()
+    @EnvironmentObject var contractsViewModel: ContractsViewModel
     @State private var showAddPaymentSheet = false
+    @State private var selectedFilter: PaymentFilter = .all
+    
+    private var filteredPayments: [Payment] {
+        switch selectedFilter {
+        case .all:
+            return paymentsViewModel.payments
+        case .pending:
+            return paymentsViewModel.payments.filter { $0.status == .pending }
+        case .overdue:
+            return paymentsViewModel.payments.filter { $0.status == .overdue }
+        case .paid:
+            return paymentsViewModel.payments.filter { $0.status == .paid }
+        }
+    }
     
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(paymentsViewModel.payments) { payment in
-                    NavigationLink {
-                        PaymentDetailView(
-                            payment: payment,
-                            paymentsViewModel: paymentsViewModel
-                        )
-                    } label: {
-                        PaymentRowView(payment: payment)
+            VStack(spacing: 0) {
+                // Фильтр платежей
+                Picker("Фильтр", selection: $selectedFilter) {
+                    ForEach(PaymentFilter.allCases, id: \.self) { filter in
+                        Text(filter.title)
+                            .tag(filter)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding()
+                
+                List {
+                    ForEach(filteredPayments) { payment in
+                        NavigationLink {
+                            PaymentDetailView(
+                                payment: payment,
+                                paymentsViewModel: paymentsViewModel
+                            )
+                        } label: {
+                            PaymentRowView(payment: payment)
+                        }
                     }
                 }
             }
@@ -35,49 +62,27 @@ struct PaymentsView: View {
     }
 }
 
-struct PaymentRowView: View {
-    let payment: Payment
+enum PaymentFilter: String, CaseIterable {
+    case all
+    case pending
+    case overdue
+    case paid
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(payment.type.title)
-                    .font(.headline)
-                
-                Spacer()
-                
-                Text(payment.formattedAmount)
-                    .bold()
-            }
-            
-            if let description = payment.description {
-                Text(description)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            
-            HStack {
-                Text(payment.formattedDate)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                
-                Spacer()
-                
-                Text(payment.status.title)
-                    .font(.caption)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(payment.status.color.opacity(0.2))
-                    .foregroundStyle(payment.status.color)
-                    .clipShape(Capsule())
-            }
+    var title: String {
+        switch self {
+        case .all:
+            return "Все"
+        case .pending:
+            return "Ожидают"
+        case .overdue:
+            return "Просрочены"
+        case .paid:
+            return "Оплачены"
         }
-        .padding(.vertical, 4)
     }
 }
 
 #Preview {
-    NavigationStack {
-        PaymentsView()
-    }
+    PaymentsView()
+        .environmentObject(ContractsViewModel())
 } 

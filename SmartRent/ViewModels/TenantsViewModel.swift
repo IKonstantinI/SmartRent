@@ -21,17 +21,45 @@ class TenantsViewModel: ObservableObject {
                 phone: "+7 (999) 123-45-67",
                 email: "ivan@example.com",
                 passport: "4444 555666",
-                inn: "123456789012"
+                inn: "123456789012",
+                bankDetails: BankDetails(
+                    bankName: "Сбербанк",
+                    accountNumber: "40817810099910004312",
+                    bik: "044525225",
+                    correspondentAccount: "30101810400000000225"
+                ),
+                taxInfo: TaxInfo(
+                    inn: "123456789012",
+                    kpp: nil,
+                    ogrn: nil,
+                    ogrnip: nil
+                ),
+                contactPerson: nil,
+                type: .individual
             ),
             Tenant(
                 id: UUID(),
-                firstName: "Петр",
-                lastName: "Петров",
-                middleName: "Петрович",
+                firstName: "ООО",
+                lastName: "Ромашка",
+                middleName: "",
                 phone: "+7 (999) 765-43-21",
-                email: "petr@example.com",
-                passport: "7777 888999",
-                inn: "987654321098"
+                email: "info@romashka.ru",
+                passport: "",
+                inn: "7701234567",
+                bankDetails: BankDetails(
+                    bankName: "ВТБ",
+                    accountNumber: "40702810123450001234",
+                    bik: "044525745",
+                    correspondentAccount: "30101810345250000745"
+                ),
+                taxInfo: TaxInfo(
+                    inn: "7701234567",
+                    kpp: "770101001",
+                    ogrn: "1027700132195",
+                    ogrnip: nil
+                ),
+                contactPerson: "Петров Петр Петрович",
+                type: .company
             )
         ]
     }
@@ -63,17 +91,45 @@ extension TenantsViewModel {
                 phone: "+7 (999) 123-45-67",
                 email: "ivan@example.com",
                 passport: "4444 555666",
-                inn: "123456789012"
+                inn: "123456789012",
+                bankDetails: BankDetails(
+                    bankName: "Сбербанк",
+                    accountNumber: "40817810099910004312",
+                    bik: "044525225",
+                    correspondentAccount: "30101810400000000225"
+                ),
+                taxInfo: TaxInfo(
+                    inn: "123456789012",
+                    kpp: nil,
+                    ogrn: nil,
+                    ogrnip: nil
+                ),
+                contactPerson: nil,
+                type: .individual
             ),
             Tenant(
                 id: UUID(),
-                firstName: "Петр",
-                lastName: "Петров",
-                middleName: "Петрович",
+                firstName: "ООО",
+                lastName: "Ромашка",
+                middleName: "",
                 phone: "+7 (999) 765-43-21",
-                email: "petr@example.com",
-                passport: "7777 888999",
-                inn: "987654321098"
+                email: "info@romashka.ru",
+                passport: "",
+                inn: "7701234567",
+                bankDetails: BankDetails(
+                    bankName: "ВТБ",
+                    accountNumber: "40702810123450001234",
+                    bik: "044525745",
+                    correspondentAccount: "30101810345250000745"
+                ),
+                taxInfo: TaxInfo(
+                    inn: "7701234567",
+                    kpp: "770101001",
+                    ogrn: "1027700132195",
+                    ogrnip: nil
+                ),
+                contactPerson: "Петров Петр Петрович",
+                type: .company
             )
         ]
         return viewModel

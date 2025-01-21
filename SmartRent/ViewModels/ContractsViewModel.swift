@@ -19,12 +19,57 @@ class ContractsViewModel: ObservableObject {
     
     private func loadMockData() {
         let propertiesVM = PropertiesViewModel()
-        let tenantsVM = TenantsViewModel()
         
-        guard let property = propertiesVM.properties.first,
-              let tenant = tenantsVM.tenants.first else {
-            return
-        }
+        // Создаем тестовых арендаторов
+        let individualTenant = Tenant(
+            id: UUID(),
+            firstName: "Иван",
+            lastName: "Иванов",
+            middleName: "Иванович",
+            phone: "+7 (999) 123-45-67",
+            email: "ivan@example.com",
+            passport: "4444 555666",
+            inn: "123456789012",
+            bankDetails: BankDetails(
+                bankName: "Сбербанк",
+                accountNumber: "40817810099910004312",
+                bik: "044525225",
+                correspondentAccount: "30101810400000000225"
+            ),
+            taxInfo: TaxInfo(
+                inn: "123456789012",
+                kpp: nil,
+                ogrn: nil,
+                ogrnip: nil
+            ),
+            contactPerson: nil,
+            type: .individual
+        )
+        
+        let companyTenant = Tenant(
+            id: UUID(),
+            firstName: "ООО",
+            lastName: "Ромашка",
+            middleName: "",
+            phone: "+7 (999) 765-43-21",
+            email: "info@romashka.ru",
+            passport: "",
+            inn: "7701234567",
+            bankDetails: BankDetails(
+                bankName: "ВТБ",
+                accountNumber: "40702810123450001234",
+                bik: "044525745",
+                correspondentAccount: "30101810345250000745"
+            ),
+            taxInfo: TaxInfo(
+                inn: "7701234567",
+                kpp: "770101001",
+                ogrn: "1027700132195",
+                ogrnip: nil
+            ),
+            contactPerson: "Петров Петр Петрович",
+            type: .company
+        )
         
         contracts = [
             RentalContract(
@@ -32,8 +77,8 @@ class ContractsViewModel: ObservableObject {
                 number: "2024-001",
                 startDate: dateFormatter.date(from: "2024-01-01")!,
                 endDate: dateFormatter.date(from: "2024-12-31")!,
-                property: property,
-                tenant: tenant,
+                property: propertiesVM.properties[0],
+                tenant: individualTenant,
                 rentalRate: 75000,
                 securityDeposit: 75000,
                 status: .active,
@@ -53,7 +98,7 @@ class ContractsViewModel: ObservableObject {
                 startDate: dateFormatter.date(from: "2023-06-01")!,
                 endDate: dateFormatter.date(from: "2024-05-31")!,
                 property: propertiesVM.properties[1],
-                tenant: tenantsVM.tenants[1],
+                tenant: companyTenant,
                 rentalRate: 120000,
                 securityDeposit: 120000,
                 status: .active,
@@ -127,7 +172,10 @@ extension ContractsViewModel {
     static var preview: ContractsViewModel {
         let viewModel = ContractsViewModel()
         let propertiesVM = PropertiesViewModel()
-        let tenantsVM = TenantsViewModel()
+        
+        // Используем тех же арендаторов, что и в основных данных
+        let individualTenant = TenantsViewModel.preview.tenants[0]
+        let companyTenant = TenantsViewModel.preview.tenants[1]
         
         viewModel.contracts = [
             RentalContract(
@@ -136,7 +184,7 @@ extension ContractsViewModel {
                 startDate: Date(),
                 endDate: Date().addingTimeInterval(86400 * 365),
                 property: propertiesVM.properties[0],
-                tenant: tenantsVM.tenants[0],
+                tenant: individualTenant,
                 rentalRate: 50000,
                 securityDeposit: 50000,
                 status: .active,
@@ -156,7 +204,7 @@ extension ContractsViewModel {
                 startDate: Date().addingTimeInterval(-86400 * 365),
                 endDate: Date(),
                 property: propertiesVM.properties[1],
-                tenant: tenantsVM.tenants[1],
+                tenant: companyTenant,
                 rentalRate: 45000,
                 securityDeposit: 45000,
                 status: .terminated,

@@ -9,6 +9,7 @@ struct TenantDetailView: View {
     var body: some View {
         List {
             Section("Личные данные") {
+                InfoRow(title: "Тип", value: typeTitle)
                 InfoRow(title: "Имя", value: tenant.firstName)
                 InfoRow(title: "Фамилия", value: tenant.lastName)
                 if !tenant.middleName.isEmpty {
@@ -21,14 +22,34 @@ struct TenantDetailView: View {
                 if !tenant.email.isEmpty {
                     InfoRow(title: "Email", value: tenant.email)
                 }
+                if let contactPerson = tenant.contactPerson {
+                    InfoRow(title: "Контактное лицо", value: contactPerson)
+                }
             }
             
-            Section("Документы") {
-                if !tenant.passport.isEmpty {
-                    InfoRow(title: "Паспорт", value: tenant.passport)
+            Section("Банковские реквизиты") {
+                InfoRow(title: "Банк", value: tenant.bankDetails.bankName)
+                InfoRow(title: "Расчетный счет", value: tenant.bankDetails.accountNumber)
+                InfoRow(title: "БИК", value: tenant.bankDetails.bik)
+                InfoRow(title: "Корр. счет", value: tenant.bankDetails.correspondentAccount)
+            }
+            
+            Section("Налоговые реквизиты") {
+                InfoRow(title: "ИНН", value: tenant.taxInfo.inn)
+                if let kpp = tenant.taxInfo.kpp {
+                    InfoRow(title: "КПП", value: kpp)
                 }
-                if !tenant.inn.isEmpty {
-                    InfoRow(title: "ИНН", value: tenant.inn)
+                if let ogrn = tenant.taxInfo.ogrn {
+                    InfoRow(title: "ОГРН", value: ogrn)
+                }
+                if let ogrnip = tenant.taxInfo.ogrnip {
+                    InfoRow(title: "ОГРНИП", value: ogrnip)
+                }
+            }
+            
+            if !tenant.passport.isEmpty {
+                Section("Паспортные данные") {
+                    InfoRow(title: "Паспорт", value: tenant.passport)
                 }
             }
         }
@@ -55,6 +76,17 @@ struct TenantDetailView: View {
         }
         .sheet(isPresented: $showEditSheet) {
             TenantFormView(tenantsViewModel: tenantsViewModel, tenant: tenant)
+        }
+    }
+    
+    private var typeTitle: String {
+        switch tenant.type {
+        case .individual:
+            return "Физическое лицо"
+        case .company:
+            return "Юридическое лицо"
+        case .entrepreneur:
+            return "ИП"
         }
     }
 }

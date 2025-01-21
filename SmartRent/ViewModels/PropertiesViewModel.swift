@@ -22,15 +22,15 @@ class PropertiesViewModel: ObservableObject {
             ),
             UtilityMeter(
                 id: UUID(),
-                type: .water,
-                number: "В-87654321",
+                type: .coldWater,
+                number: "ХВС-87654321",
                 lastReading: 345.6,
                 lastReadingDate: Date()
             ),
             UtilityMeter(
                 id: UUID(),
-                type: .gas,
-                number: "Г-23456789",
+                type: .hotWater,
+                number: "ГВС-23456789",
                 lastReading: 567.8,
                 lastReadingDate: Date()
             )
@@ -54,8 +54,8 @@ class PropertiesViewModel: ObservableObject {
             )
         ]
         
-        // Коммунальные услуги для жилых помещений
-        let residentialUtilities = [
+        // Коммунальные услуги
+        let utilities = [
             Utility(
                 id: UUID(),
                 type: .electricity,
@@ -65,35 +65,17 @@ class PropertiesViewModel: ObservableObject {
             ),
             Utility(
                 id: UUID(),
-                type: .water,
+                type: .coldWater,
                 provider: "Мосводоканал",
                 accountNumber: "987654321",
                 rate: 35.12
             ),
             Utility(
                 id: UUID(),
-                type: .gas,
-                provider: "Мосгаз",
-                accountNumber: "456789123",
-                rate: 7.23
-            )
-        ]
-        
-        // Коммунальные услуги для коммерческих помещений
-        let commercialUtilities = [
-            Utility(
-                id: UUID(),
-                type: .electricity,
-                provider: "МосЭнергоСбыт",
-                accountNumber: "К-123456789",
-                rate: 7.82
-            ),
-            Utility(
-                id: UUID(),
-                type: .heating,
+                type: .hotWater,
                 provider: "МОЭК",
-                accountNumber: "К-987654321",
-                rate: 2543.17
+                accountNumber: "456789123",
+                rate: 138.50
             )
         ]
         
@@ -133,6 +115,60 @@ class PropertiesViewModel: ObservableObject {
             )
         ]
         
+        // Расходы на обслуживание
+        let maintenanceCosts = [
+            MaintenanceCost(
+                id: UUID(),
+                date: Date(),
+                description: "Замена смесителя",
+                amount: 2500,
+                type: .repair,
+                paidBy: .landlord
+            ),
+            MaintenanceCost(
+                id: UUID(),
+                date: Date().addingTimeInterval(86400 * 7),
+                description: "Уборка помещения",
+                amount: 3000,
+                type: .cleaning,
+                paidBy: .tenant
+            )
+        ]
+        
+        // Квитанции ЖКХ
+        let utilityBills = [
+            UtilityBill(
+                id: UUID(),
+                date: Date(),
+                amount: 5430.50,
+                type: .electricity,
+                isPaid: true,
+                paidDate: Date(),
+                scanURL: nil
+            ),
+            UtilityBill(
+                id: UUID(),
+                date: Date(),
+                amount: 2340.80,
+                type: .coldWater,
+                isPaid: false,
+                paidDate: nil,
+                scanURL: nil
+            )
+        ]
+        
+        // Бронирования
+        let reservations = [
+            Reservation(
+                id: UUID(),
+                startDate: Date().addingTimeInterval(86400 * 30),
+                endDate: Date().addingTimeInterval(86400 * 60),
+                tenantId: nil,
+                status: .pending,
+                comment: "Предварительное бронирование"
+            )
+        ]
+        
         properties = [
             Property(
                 id: UUID(),
@@ -143,8 +179,11 @@ class PropertiesViewModel: ObservableObject {
                 status: .available,
                 imageURL: nil,
                 meters: residentialMeters,
-                utilities: residentialUtilities,
-                repairs: currentRepairs
+                utilities: utilities,
+                repairs: currentRepairs,
+                maintenanceCosts: maintenanceCosts,
+                utilityBills: utilityBills,
+                reservations: reservations
             ),
             Property(
                 id: UUID(),
@@ -155,8 +194,11 @@ class PropertiesViewModel: ObservableObject {
                 status: .rented,
                 imageURL: "https://images.unsplash.com/photo-1497366216548-37526070297c",
                 meters: commercialMeters,
-                utilities: commercialUtilities,
-                repairs: []
+                utilities: utilities,
+                repairs: [],
+                maintenanceCosts: [],
+                utilityBills: [],
+                reservations: []
             ),
             Property(
                 id: UUID(),
@@ -167,8 +209,11 @@ class PropertiesViewModel: ObservableObject {
                 status: .maintenance,
                 imageURL: "https://images.unsplash.com/photo-1497366811353-6870744d04b2",
                 meters: commercialMeters,
-                utilities: commercialUtilities,
-                repairs: plannedRepairs
+                utilities: utilities,
+                repairs: plannedRepairs,
+                maintenanceCosts: [],
+                utilityBills: [],
+                reservations: []
             ),
             Property(
                 id: UUID(),
@@ -179,8 +224,11 @@ class PropertiesViewModel: ObservableObject {
                 status: .available,
                 imageURL: "https://images.unsplash.com/photo-1493809842364-78817add7ffb",
                 meters: residentialMeters,
-                utilities: residentialUtilities,
-                repairs: []
+                utilities: utilities,
+                repairs: [],
+                maintenanceCosts: [],
+                utilityBills: [],
+                reservations: []
             ),
             Property(
                 id: UUID(),
@@ -191,8 +239,11 @@ class PropertiesViewModel: ObservableObject {
                 status: .rented,
                 imageURL: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
                 meters: commercialMeters,
-                utilities: commercialUtilities,
-                repairs: []
+                utilities: utilities,
+                repairs: [],
+                maintenanceCosts: [],
+                utilityBills: [],
+                reservations: []
             ),
             Property(
                 id: UUID(),
@@ -203,8 +254,11 @@ class PropertiesViewModel: ObservableObject {
                 status: .available,
                 imageURL: "https://images.unsplash.com/photo-1556912998-c57cc6b63cd7",
                 meters: commercialMeters,
-                utilities: commercialUtilities,
-                repairs: plannedRepairs
+                utilities: utilities,
+                repairs: plannedRepairs,
+                maintenanceCosts: [],
+                utilityBills: [],
+                reservations: []
             ),
             Property(
                 id: UUID(),
@@ -215,8 +269,11 @@ class PropertiesViewModel: ObservableObject {
                 status: .maintenance,
                 imageURL: nil,
                 meters: residentialMeters,
-                utilities: residentialUtilities,
-                repairs: currentRepairs
+                utilities: utilities,
+                repairs: currentRepairs,
+                maintenanceCosts: [],
+                utilityBills: [],
+                reservations: []
             ),
             Property(
                 id: UUID(),
@@ -227,8 +284,11 @@ class PropertiesViewModel: ObservableObject {
                 status: .rented,
                 imageURL: "https://images.unsplash.com/photo-1536376072261-38c75010e6c9",
                 meters: commercialMeters,
-                utilities: commercialUtilities,
-                repairs: []
+                utilities: utilities,
+                repairs: [],
+                maintenanceCosts: [],
+                utilityBills: [],
+                reservations: []
             )
         ]
     }

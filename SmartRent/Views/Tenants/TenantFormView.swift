@@ -11,7 +11,13 @@ struct TenantFormView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Личные данные") {
+                Section("Основная информация") {
+                    Picker("Тип", selection: $viewModel.type) {
+                        Text("Физическое лицо").tag(TenantType.individual)
+                        Text("Юридическое лицо").tag(TenantType.company)
+                        Text("ИП").tag(TenantType.entrepreneur)
+                    }
+                    
                     TextField("Имя", text: $viewModel.firstName)
                     TextField("Фамилия", text: $viewModel.lastName)
                     TextField("Отчество", text: $viewModel.middleName)
@@ -23,12 +29,38 @@ struct TenantFormView: View {
                     TextField("Email", text: $viewModel.email)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
+                    TextField("Контактное лицо", text: $viewModel.contactPerson)
                 }
                 
-                Section("Документы") {
-                    TextField("Паспорт", text: $viewModel.passport)
+                Section("Банковские реквизиты") {
+                    TextField("Наименование банка", text: $viewModel.bankName)
+                    TextField("Расчетный счет", text: $viewModel.accountNumber)
+                        .keyboardType(.numberPad)
+                    TextField("БИК", text: $viewModel.bik)
+                        .keyboardType(.numberPad)
+                    TextField("Корр. счет", text: $viewModel.correspondentAccount)
+                        .keyboardType(.numberPad)
+                }
+                
+                Section("Налоговые реквизиты") {
                     TextField("ИНН", text: $viewModel.inn)
                         .keyboardType(.numberPad)
+                    if viewModel.type == .company {
+                        TextField("КПП", text: $viewModel.kpp)
+                            .keyboardType(.numberPad)
+                        TextField("ОГРН", text: $viewModel.ogrn)
+                            .keyboardType(.numberPad)
+                    }
+                    if viewModel.type == .entrepreneur {
+                        TextField("ОГРНИП", text: $viewModel.ogrnip)
+                            .keyboardType(.numberPad)
+                    }
+                }
+                
+                if viewModel.type == .individual {
+                    Section("Паспортные данные") {
+                        TextField("Паспорт", text: $viewModel.passport)
+                    }
                 }
             }
             .navigationTitle(viewModel.tenant == nil ? "Новый арендатор" : "Редактирование")

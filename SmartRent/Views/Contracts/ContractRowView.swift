@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ContractRowView: View {
     let contract: RentalContract
-    @StateObject private var tenantsViewModel = TenantsViewModel()
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -22,19 +21,24 @@ struct ContractRowView: View {
                 StatusBadgeView(status: contract.status)
             }
             
-            NavigationLink(destination: TenantDetailView(
-                tenant: contract.tenant,
-                tenantsViewModel: tenantsViewModel
-            )) {
+            HStack {
                 Text(contract.tenant.fullName)
                     .font(.subheadline)
+                
+                Spacer()
+                
+                Text(tenantTypeTitle)
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(tenantTypeColor.opacity(0.2))
+                    .foregroundStyle(tenantTypeColor)
+                    .clipShape(Capsule())
             }
             
-            NavigationLink(destination: PropertyDetailView(property: contract.property)) {
-                Text(contract.property.name)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
+            Text(contract.property.name)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
             
             HStack {
                 Text("\(dateFormatter.string(from: contract.startDate)) - \(dateFormatter.string(from: contract.endDate))")
@@ -47,8 +51,36 @@ struct ContractRowView: View {
                     .font(.subheadline)
                     .bold()
             }
+            
+            if let contactPerson = contract.tenant.contactPerson {
+                Text("Контактное лицо: \(contactPerson)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding(.vertical, 4)
+    }
+    
+    private var tenantTypeTitle: String {
+        switch contract.tenant.type {
+        case .individual:
+            return "Физ. лицо"
+        case .company:
+            return "Юр. лицо"
+        case .entrepreneur:
+            return "ИП"
+        }
+    }
+    
+    private var tenantTypeColor: Color {
+        switch contract.tenant.type {
+        case .individual:
+            return .blue
+        case .company:
+            return .purple
+        case .entrepreneur:
+            return .green
+        }
     }
 }
 

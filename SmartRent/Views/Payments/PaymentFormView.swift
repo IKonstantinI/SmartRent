@@ -17,8 +17,25 @@ struct PaymentFormView: View {
                         Text("Выберите договор")
                             .tag(nil as UUID?)
                         ForEach(contractsViewModel.contracts) { contract in
-                            Text("\(contract.number) - \(contract.tenant.fullName)")
-                                .tag(contract.id as UUID?)
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("\(contract.number)")
+                                    Text(contract.tenant.fullName)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                
+                                Spacer()
+                                
+                                Text(tenantTypeTitle(for: contract.tenant))
+                                    .font(.caption)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(tenantTypeColor(for: contract.tenant).opacity(0.2))
+                                    .foregroundStyle(tenantTypeColor(for: contract.tenant))
+                                    .clipShape(Capsule())
+                            }
+                            .tag(contract.id as UUID?)
                         }
                     }
                 }
@@ -67,6 +84,28 @@ struct PaymentFormView: View {
                 }
                 .disabled(!viewModel.isValid)
             }
+        }
+    }
+    
+    private func tenantTypeTitle(for tenant: Tenant) -> String {
+        switch tenant.type {
+        case .individual:
+            return "Физ. лицо"
+        case .company:
+            return "Юр. лицо"
+        case .entrepreneur:
+            return "ИП"
+        }
+    }
+    
+    private func tenantTypeColor(for tenant: Tenant) -> Color {
+        switch tenant.type {
+        case .individual:
+            return .blue
+        case .company:
+            return .purple
+        case .entrepreneur:
+            return .green
         }
     }
 }

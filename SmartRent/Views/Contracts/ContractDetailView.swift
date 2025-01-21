@@ -135,12 +135,55 @@ struct ContractDetailView: View {
                     tenantsViewModel: tenantsViewModel
                 )
             } label: {
-                VStack(alignment: .leading) {
-                    Text(contract.tenant.fullName)
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(contract.tenant.fullName)
+                            .font(.headline)
+                        
+                        Spacer()
+                        
+                        Text(tenantTypeTitle)
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(tenantTypeColor.opacity(0.2))
+                            .foregroundStyle(tenantTypeColor)
+                            .clipShape(Capsule())
+                    }
+                    
                     Text(contract.tenant.phone)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
+                    
+                    if let contactPerson = contract.tenant.contactPerson {
+                        Text("Контактное лицо: \(contactPerson)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
+        }
+    }
+    
+    private var tenantTypeTitle: String {
+        switch contract.tenant.type {
+        case .individual:
+            return "Физ. лицо"
+        case .company:
+            return "Юр. лицо"
+        case .entrepreneur:
+            return "ИП"
+        }
+    }
+    
+    private var tenantTypeColor: Color {
+        switch contract.tenant.type {
+        case .individual:
+            return .blue
+        case .company:
+            return .purple
+        case .entrepreneur:
+            return .green
         }
     }
     
